@@ -27,7 +27,7 @@ namespace RemoveEdgeGlow
 
             foreach (var efsh in state.LoadOrder.PriorityOrder.EffectShader().WinningOverrides())
             {
-                if ( ShouldSkip(efsh) || Settings.IsBlacklisted(efsh.FormKey) || efsh.EditorID == null )
+                if ( Settings.IsBlacklisted(efsh.FormKey) || efsh.EditorID == null )
                     continue;
 
                 Console.WriteLine($"Currently Processing {efsh.EditorID}");
@@ -44,11 +44,6 @@ namespace RemoveEdgeGlow
             if (countChanges == 0)
                 Console.WriteLine("Failed to modify any records! Check your settings!");
             Console.WriteLine($"\nProcess Complete.\nPatched {countChanges} record{(countChanges > 1 ? "s" : "")}.\n");
-        }
-
-        internal static bool ShouldSkip(IEffectShaderGetter efsh)
-        {
-            return efsh.EditorID == null;
         }
     }
 }

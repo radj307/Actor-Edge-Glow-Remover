@@ -12,15 +12,16 @@ namespace RemoveEdgeGlow
 
     public class Settings
     {
-        public EffectShaderSettings DefaultShaderSettings = new();
-        public List<EffectShaderSettingsOverride> Overrides = new() {};
-
         [Tooltip("Add mods you don't want to patch here.")]
         public List<ModKey> ModBlacklist = new();
         public List<FormLink<EffectShader>> Blacklist = new()
         {
 
         };
+
+        public List<EffectShaderSettingsOverride> Overrides = new() { };
+        public EffectShaderSettings DefaultShaderSettings = new();
+
 
         private EffectShaderSettingsOverride GetHighestPriorityOverride(ref EffectShader efsh)
         {
