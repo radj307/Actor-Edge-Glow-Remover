@@ -1,3 +1,4 @@
+using Mutagen.Bethesda.Skyrim;
 namespace RemoveEdgeGlow.SettingsObjects
 {
     public class EffectShaderSettings
