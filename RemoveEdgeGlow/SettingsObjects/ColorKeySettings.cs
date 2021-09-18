@@ -18,7 +18,6 @@ namespace RemoveEdgeGlow.SettingsObjects
         public int Red;
         public int Green;
         public int Blue;
-        public float Scale;
         public float Time;
 
         private static float GetFloat(float current, float setting, out bool changed)
@@ -27,10 +26,6 @@ namespace RemoveEdgeGlow.SettingsObjects
             return changed ? setting : current;
         }
 
-        public float GetScale(float current, out bool changed)
-        {
-            return GetFloat(current, Scale, out changed);
-        }
         public float GetTime(float current, out bool changed)
         {
             return GetFloat(current, Time, out changed);
