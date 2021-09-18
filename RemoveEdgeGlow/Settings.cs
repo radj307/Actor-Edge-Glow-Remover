@@ -36,6 +36,7 @@ namespace RemoveEdgeGlow
                 if (priority <= highest)
                     continue;
                 highestSettings = settings;
+                highest = settings.Priority;
             }
             return highestSettings;
         }
