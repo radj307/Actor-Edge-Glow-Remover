@@ -1,0 +1,8 @@
+{
+  "Nickname": "Remove Edge Glow",
+  "Visibility": "Hidden",
+  "OneLineDescription": "Remove active effect \"edge glow\" from actors",
+  "LongDescription": "Removes the awful \"edge glow\" effect from actors when certain magic effects are active.",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": []
+}
