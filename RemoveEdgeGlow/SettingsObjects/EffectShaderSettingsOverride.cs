@@ -1,8 +1,10 @@
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.WPF.Reflection.Attributes;
 
 namespace RemoveEdgeGlow.SettingsObjects
 {
+    [ObjectNameMember(nameof(EffectShader))]
     public class EffectShaderSettingsOverride : EffectShaderSettings
     {
         public EffectShaderSettingsOverride()
@@ -27,8 +29,11 @@ namespace RemoveEdgeGlow.SettingsObjects
             FillTextureScaleV = texScaleV;
         }
 
+        [Tooltip("The effect formlink to apply these settings to.")]
         public FormLink<EffectShader> EffectShader;
+        [Tooltip("Disabling an override will prevent it from being applied without deleting it from the list. Default settings will take priority.")]
         public bool Enabled;
+        [Tooltip("The override with the highest priority wins if multiple overrides could be applied to the same effect.")]
         public int Priority;
 
         public bool ShouldSkip()

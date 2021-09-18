@@ -1,4 +1,6 @@
 using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.WPF.Reflection.Attributes;
+
 namespace RemoveEdgeGlow.SettingsObjects
 {
     public class EffectShaderSettings
@@ -22,12 +24,15 @@ namespace RemoveEdgeGlow.SettingsObjects
             FillTextureScaleV = 1.0f;
         }
 
+        [SettingName("Edge Effect - Persistent Alpha Ratio")]
         public float EdgeEffectPersistentAlphaRatio;
+        [SettingName("Edge Effect - Full Alpha Ratio")]
         public float EdgeEffectFullAlphaRatio;
         public ColorKeySettings ColorKey1;
         public ColorKeySettings ColorKey2;
         public ColorKeySettings ColorKey3;
         public float ColorScale;
+        [SettingName("Particle Animation Settings")]
         public ParticleShaderSettings ParticleSettings;
         public float FillTextureScaleU;
         public float FillTextureScaleV;

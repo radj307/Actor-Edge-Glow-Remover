@@ -19,9 +19,12 @@ namespace RemoveEdgeGlow
 
         };
 
+        [SettingName("Shader Overrides")]
         public List<EffectShaderSettingsOverride> Overrides = new() { };
-        public EffectShaderSettings DefaultShaderSettings = new();
 
+        [SettingName("Default Shader Override")]
+        [Tooltip("These are the settings applied when there are no overrides specified for an effect.")]
+        public EffectShaderSettings DefaultShaderSettings = new();
 
         private EffectShaderSettingsOverride GetHighestPriorityOverride(ref EffectShader efsh)
         {
