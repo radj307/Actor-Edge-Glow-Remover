@@ -4,17 +4,16 @@ namespace RemoveEdgeGlow.SettingsObjects
 {
     public class ColorKeySettings
     {
-        public ColorKeySettings(int red = 0, int green = 0, int blue = 0, float scale = 1.0f, float time = 1.0f)
+        public ColorKeySettings(bool enabled = true, int red = 0, int green = 0, int blue = 0, float time = 1.0f)
         {
-            Enabled = true;
+            Enabled = enabled;
             Red = red;
             Green = green;
             Blue = blue;
-            Scale = scale;
             Time = time;
         }
 
-        public bool Enabled = false;
+        public bool Enabled;
         public int Red;
         public int Green;
         public int Blue;
