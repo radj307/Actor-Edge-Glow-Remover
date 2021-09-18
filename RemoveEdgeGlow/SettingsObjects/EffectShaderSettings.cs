@@ -37,38 +37,51 @@ namespace RemoveEdgeGlow.SettingsObjects
         public float FillTextureScaleU;
         public float FillTextureScaleV;
 
-        public bool ApplySettingsTo(EffectShader efsh)
+        // DO NOT PASS NULL VALUES!
+        private static T ApplySettingsToValue<T>(T value, T setting, ref int changed)
         {
+            var changedThis = !value!.Equals(setting!);
+            changed += changedThis ? 1 : 0;
+            return changedThis ? setting : value;
+        }
+
+        public int ApplySettingsTo(ref EffectShader efsh)
+        {
+            var changed = 0;
             // Edge Effect Alpha Ratios
-            efsh.EdgeEffectPersistentAlphaRatio = EdgeEffectPersistentAlphaRatio;
-            efsh.EdgeEffectFullAlphaRatio = EdgeEffectFullAlphaRatio;
+            efsh.EdgeEffectPersistentAlphaRatio = ApplySettingsToValue(efsh.EdgeEffectPersistentAlphaRatio, EdgeEffectPersistentAlphaRatio, ref changed);
+            efsh.EdgeEffectFullAlphaRatio       = ApplySettingsToValue(efsh.EdgeEffectFullAlphaRatio, EdgeEffectFullAlphaRatio, ref changed);
 
             // Color Key 1
-            efsh.ColorKey1 = ColorKey1;
+            efsh.ColorKey1     = ApplySettingsToValue(efsh.ColorKey1, ColorKey1, ref changed);
             efsh.ColorKey1Time = ColorKey1.GetTime(efsh.ColorKey1Time, out var changedKey1Time);
 
             // Color Key 2
-            efsh.ColorKey2 = ColorKey2;
+            efsh.ColorKey2     = ApplySettingsToValue(efsh.ColorKey2, ColorKey2, ref changed);
             efsh.ColorKey2Time = ColorKey2.GetTime(efsh.ColorKey2Time, out var changedKey2Time);
 
             // Color Key 3
-            efsh.ColorKey3 = ColorKey3;
+            efsh.ColorKey3     = ApplySettingsToValue(efsh.ColorKey3, ColorKey3, ref changed);
             efsh.ColorKey3Time = ColorKey3.GetTime(efsh.ColorKey3Time, out var changedKey3Time);
 
             // Particle Shader Animated
-            efsh.ParticleAnimatedStartFrame = ParticleSettings.StartFrame;
-            efsh.ParticleAnimatedStartFrameVariation = ParticleSettings.StartFrameVariation;
-            efsh.ParticleAnimatedEndFrame = ParticleSettings.EndFrame;
-            efsh.ParticleAnimatedLoopStartFrame = ParticleSettings.LoopStartFrame;
-            efsh.ParticleAnimatedLoopStartVariation = ParticleSettings.LoopStartVariation;
-            efsh.ParticleAnimatedFrameCount = ParticleSettings.FrameCount;
-            efsh.ParticleAnimatedFrameCountVariation = ParticleSettings.FrameCountVariation;
+            efsh.ParticleAnimatedStartFrame          = ApplySettingsToValue(efsh.ParticleAnimatedStartFrame, ParticleSettings.StartFrame, ref changed);
+            efsh.ParticleAnimatedStartFrameVariation = ApplySettingsToValue(efsh.ParticleAnimatedStartFrameVariation, ParticleSettings.StartFrameVariation, ref changed);
+            efsh.ParticleAnimatedEndFrame            = ApplySettingsToValue(efsh.ParticleAnimatedEndFrame, ParticleSettings.EndFrame, ref changed);
+            efsh.ParticleAnimatedLoopStartFrame      = ApplySettingsToValue(efsh.ParticleAnimatedLoopStartFrame, ParticleSettings.LoopStartFrame, ref changed);
+            efsh.ParticleAnimatedLoopStartVariation  = ApplySettingsToValue(efsh.ParticleAnimatedLoopStartVariation, ParticleSettings.LoopStartVariation, ref changed);
+            efsh.ParticleAnimatedFrameCount          = ApplySettingsToValue(efsh.ParticleAnimatedFrameCount, ParticleSettings.FrameCount, ref changed);
+            efsh.ParticleAnimatedFrameCountVariation = ApplySettingsToValue(efsh.ParticleAnimatedFrameCountVariation, ParticleSettings.FrameCountVariation, ref changed);
 
             // Fill Texture Scale
-            efsh.FillTextureScaleU = FillTextureScaleU;
-            efsh.FillTextureScaleV = FillTextureScaleV;
+            efsh.FillTextureScaleU = ApplySettingsToValue(efsh.FillTextureScaleU, FillTextureScaleU, ref changed);
+            efsh.FillTextureScaleV = ApplySettingsToValue(efsh.FillTextureScaleV, FillTextureScaleV, ref changed);
 
-            return changedKey1Time || changedKey2Time || changedKey3Time; // TODO: Add more conditions here? Totally optional tbh
+            changed += changedKey1Time ? 1 : 0;
+            changed += changedKey2Time ? 1 : 0;
+            changed += changedKey3Time ? 1 : 0;
+
+            return changed;
         }
     }
 }

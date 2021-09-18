@@ -7,9 +7,6 @@ using RemoveEdgeGlow.SettingsObjects;
 
 namespace RemoveEdgeGlow
 {
-
-
-
     public class Settings
     {
         [Tooltip("Add mods you don't want to patch here.")]
@@ -41,16 +38,19 @@ namespace RemoveEdgeGlow
             return highestSettings;
         }
 
-        public bool ApplyChanges(ref EffectShader efsh)
+        public bool ApplyChanges(ref EffectShader efsh, out int changeCount)
         {
             if (Overrides.Count != 0)
             {
                 var settings = GetHighestPriorityOverride(ref efsh);
-
-                if (!settings.ShouldSkip()) // if overrides return null settings, apply defaults
-                    return settings.ApplySettingsTo(efsh);
+                if (!settings.ShouldSkip())
+                {
+                    changeCount = settings.ApplySettingsTo(ref efsh);
+                    return changeCount > 0;
+                }
             }
-            return DefaultShaderSettings.ApplySettingsTo(efsh);
+            changeCount = DefaultShaderSettings.ApplySettingsTo(ref efsh);
+            return changeCount > 0;
         }
 
         private bool IsBlacklisted(ModKey modkey)
