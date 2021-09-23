@@ -3,13 +3,14 @@ using Mutagen.Bethesda;
 using Mutagen.Bethesda.Synthesis;
 using Mutagen.Bethesda.Skyrim;
 using System.Threading.Tasks;
+using RemoveEdgeGlow.Settings;
 
 namespace RemoveEdgeGlow
 {
     public static class Program
     {
-        internal static Lazy<Settings> _lazySettings = null!;
-        internal static Settings Settings => _lazySettings.Value;
+        internal static Lazy<TopSettings> _lazySettings = null!;
+        internal static TopSettings Settings => _lazySettings.Value;
 
         // Main
         public static async Task<int> Main(string[] args)
@@ -26,26 +27,42 @@ namespace RemoveEdgeGlow
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             Console.WriteLine("\n\nInitialization Complete.\nBeginning Process...\n");
-            int countChanges = 0; // count modified records
+            int changes = 0; // count modified records
 
+            // iterate through all art objects
+            foreach (var arto in state.LoadOrder.PriorityOrder.ArtObject().WinningOverrides())
+            {
+                if (Settings.IsBlacklisted(arto) || arto.EditorID == null)
+                    continue;
+
+                var artoCopy = arto.DeepCopy();
+
+                if (Settings.ApplySettings(ref artoCopy))
+                {
+                    ++changes;
+                    state.PatchMod.ArtObjects.Set(artoCopy);
+                    Console.WriteLine($"Set {arto.EditorID} model filename to {Constants.EmptyArtObjectModel}");
+                }
+            }
+            // iterate through all effect shaders
             foreach (var efsh in state.LoadOrder.PriorityOrder.EffectShader().WinningOverrides())
             {
-                if ( Settings.IsBlacklisted(efsh.FormKey) || efsh.EditorID == null )
+                if ( Settings.IsBlacklisted(efsh) || efsh.EditorID == null )
                     continue;
 
                 var efshCopy = efsh.DeepCopy();
 
-                if (Settings.ApplyChanges(ref efshCopy, out var subrecordChangeCount) && subrecordChangeCount > 0)
+                if (Settings.ApplySettings(ref efshCopy, out var subrecordChangeCount) && subrecordChangeCount > 0)
                 {
-                    ++countChanges;
+                    ++changes;
                     state.PatchMod.EffectShaders.Set(efshCopy);
                     Console.WriteLine($"Modified {subrecordChangeCount} values in {efsh.EditorID}");
                 }
             }
 
-            if (countChanges == 0)
+            if (changes == 0)
                 Console.WriteLine("Failed to modify any records! Check your settings!");
-            Console.WriteLine($"\nProcess Complete.\nPatched {countChanges} record{(countChanges > 1 ? "s" : "")}.\n");
+            Console.WriteLine($"\nProcess Complete.\nPatched {changes} record{(changes > 1 ? "s" : "")}.\n");
         }
     }
 }
