@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace RemoveEdgeGlow.SettingsObjects
+namespace RemoveEdgeGlow.Settings.RecordSettings.EFSH
 {
     public class EFSHColorKey
     {

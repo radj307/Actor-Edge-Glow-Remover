@@ -1,4 +1,4 @@
-namespace RemoveEdgeGlow.SettingsObjects
+namespace RemoveEdgeGlow.Settings.RecordSettings.EFSH
 {
     public class EFSHParticleShader
     {
