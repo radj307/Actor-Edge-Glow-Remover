@@ -7,6 +7,9 @@ using RemoveEdgeGlow.Settings.GenericUtils;
 
 namespace RemoveEdgeGlow.Settings.RecordSettings
 {
+    /// <summary>
+    /// Contains all Effect-Shader-Specific Settings.
+    /// </summary>
     public class SettingsEffectShader : MatchEditorID
     {
         [MaintainOrder]
@@ -23,24 +26,36 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         public float EdgeEffectPersistentAlphaRatio = 0.0f;
         [SettingName("Edge Effect - Full Alpha Ratio")]
         public float EdgeEffectFullAlphaRatio = 0.0f;
+        [SettingName("ColorKey1")]
         public EFSHColorKey ColorKey1 = new()
         {
             Enabled = false
         };
+        [SettingName("ColorKey2")]
         public EFSHColorKey ColorKey2 = new()
         {
             Enabled = true
         };
+        [SettingName("ColorKey3")]
         public EFSHColorKey ColorKey3 = new()
         {
             Enabled = true
         };
+        [SettingName("ColorScale")]
         public float ColorScale = 1.0f;
         [SettingName("Particle Animation Settings")]
         public EFSHParticleShader ParticleSettings = new();
+        [SettingName("FillTextureScaleU")]
         public float FillTextureScaleU = 1.0f;
+        [SettingName("FillTextureScaleV")]
         public float FillTextureScaleV = 1.0f;
 
+        /// <summary>
+        /// Check if the given EffectShader is present on the blacklist, and/or whitelisted.
+        /// Returns true if the effect is not a valid patcher target.
+        /// </summary>
+        /// <param name="efsh">An IEffectShaderGetter instance.</param>
+        /// <returns>bool</returns>
         public bool IsBlacklisted(IEffectShaderGetter efsh)
         {
             bool onBlacklist = Blacklist.Contains(efsh.FormKey); // query blacklist
@@ -50,7 +65,14 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
             return !onWhitelist || onBlacklist; // return true if on not whitelist or on blacklist
         }
 
-        // DO NOT PASS NULL VALUES!
+        /// <summary>
+        /// Apply current settings to a given value.
+        /// </summary>
+        /// <typeparam name="T">Variable Type</typeparam>
+        /// <param name="value">The subrecord's current unmodified value.</param>
+        /// <param name="setting">The current setting's value.</param>
+        /// <param name="changed">Number of changed records.</param>
+        /// <returns>T</returns>
         private static T ApplySettingsToValue<T>(T value, T setting, ref int changed)
         {
             var changedThis = !value!.Equals(setting!);
@@ -58,6 +80,12 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
             return changedThis ? setting : value;
         }
 
+        /// <summary>
+        /// Apply current settings to an EffectShader object reference.
+        /// Returns the number of modified subrecords.
+        /// </summary>
+        /// <param name="efsh"></param>
+        /// <returns>int</returns>
         public int ApplySettingsTo(ref EffectShader efsh)
         {
             var changed = 0;

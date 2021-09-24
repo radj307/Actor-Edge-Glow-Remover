@@ -4,9 +4,13 @@ using Mutagen.Bethesda.FormKeys.SkyrimSE;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.WPF.Reflection.Attributes;
+using RemoveEdgeGlow.Settings.GenericUtils;
 
 namespace RemoveEdgeGlow.Settings.RecordSettings
 {
+    /// <summary>
+    /// Contains all Art-Object-Specific Settings.
+    /// </summary>
     [ObjectNameMember(nameof(EmptyEffectModel))]
     public class SettingsArtObject : MatchEditorID
     {
@@ -14,6 +18,7 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         {
             "cloak"
         }) { }
+        [MaintainOrder]
         [SettingName("Model Filepath")]
         [Tooltip("Absolute or relative filepath to a .nif containing a blank Art Object.")]
         public string EmptyEffectModel = Constants.EmptyArtObjectModel;
@@ -35,12 +40,24 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         { // ARTO Blacklist
         };
 
+        /// <summary>
+        /// Get the correct model filepath with the current settings.
+        /// </summary>
+        /// <param name="current">The record's current model filepath.</param>
+        /// <param name="changed">True when the current model filepath should be overridden.</param>
+        /// <returns>string</returns>
         public string GetModelFile(string current, out bool changed)
         {
             changed = !current.Equals(EmptyEffectModel, StringComparison.OrdinalIgnoreCase) && EmptyEffectModel.Length > 0;
             return changed ? EmptyEffectModel : current;
         }
 
+        /// <summary>
+        /// Check if the given Art Object is present on the blacklist, and/or whitelisted.
+        /// Returns true if the art object is not a valid patcher target.
+        /// </summary>
+        /// <param name="arto">An IArtObjectGetter instance.</param>
+        /// <returns>bool</returns>
         public bool IsBlacklisted(IArtObjectGetter arto)
         {
             bool onBlacklist = Blacklist.Contains(arto.FormKey); // query blacklist

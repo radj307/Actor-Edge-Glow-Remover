@@ -26,7 +26,20 @@ namespace RemoveEdgeGlow
         // PatchMain
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            Console.WriteLine("\n\nInitialization Complete.\nBeginning Process...\n");
+            Console.WriteLine();
+            // Check string matchlist in EffectShader
+            if (Settings.EffectShader.GetInvalidEntryCount(out var inv_count))
+            {
+                Console.WriteLine($"[WARN]\tCommonNames list in section {Constants.EffectShaderSectionName} contains {inv_count} entries that are too short and have been removed.");
+            }
+            // Check string matchlist in ArtObject
+            if (Settings.ArtObject.GetInvalidEntryCount(out inv_count))
+            {
+                Console.WriteLine($"[WARN]\tCommonNames list in section {Constants.ArtObjectSectionName} contains {inv_count} entries that are too short and have been removed.");
+            }
+
+            Console.WriteLine("\nInitialization Complete.\nBeginning Process...\n");
+
             int changes = 0; // count modified records
 
             // iterate through all art objects
@@ -39,9 +52,9 @@ namespace RemoveEdgeGlow
 
                 if (Settings.ApplySettingsTo(ref artoCopy))
                 {
-                    ++changes;
+                    //++changes;
                     state.PatchMod.ArtObjects.Set(artoCopy);
-                    Console.WriteLine($"Set {arto.EditorID} model filename to {Constants.EmptyArtObjectModel}");
+                    Console.WriteLine($"[{++changes}]\tSet {arto.EditorID} model filepath to {Settings.ArtObject.EmptyEffectModel}");
                 }
             }
             // iterate through all effect shaders
@@ -54,9 +67,8 @@ namespace RemoveEdgeGlow
 
                 if (Settings.ApplySettingsTo(ref efshCopy, out var subrecordChangeCount) && subrecordChangeCount > 0)
                 {
-                    ++changes;
                     state.PatchMod.EffectShaders.Set(efshCopy);
-                    Console.WriteLine($"Modified {subrecordChangeCount} values in {efsh.EditorID}");
+                    Console.WriteLine($"[{++changes}]\tModified {subrecordChangeCount} value{(subrecordChangeCount > 1 ? "s" : "")} in {efsh.EditorID}");
                 }
             }
 
