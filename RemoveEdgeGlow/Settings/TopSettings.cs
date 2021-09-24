@@ -18,10 +18,10 @@ namespace RemoveEdgeGlow.Settings
         { // Default Mod Key List
         };
 
-        [SettingName("Edge Glow Settings (EFSH - Effect Shader)")]
+        [SettingName(nameof(Constants.EffectShaderSectionName))]
         public SettingsEffectShader EffectShader = new();
 
-        [SettingName("Visual Effect Settings (ARTO - Art Object)")]
+        [SettingName(nameof(Constants.ArtObjectSectionName))]
         public SettingsArtObject ArtObject = new();
 
         public bool IsBlacklisted(ModKey key)
