@@ -8,8 +8,12 @@ using Mutagen.Bethesda.WPF.Reflection.Attributes;
 namespace RemoveEdgeGlow.Settings.RecordSettings
 {
     [ObjectNameMember(nameof(EmptyEffectModel))]
-    public class SettingsArtObject
+    public class SettingsArtObject : MatchEditorID
     {
+        public SettingsArtObject() : base(new()
+        {
+            "cloak"
+        }) { }
         [SettingName("Model Filepath")]
         [Tooltip("Absolute or relative filepath to a .nif containing a blank Art Object.")]
         public string EmptyEffectModel = Constants.EmptyArtObjectModel;
@@ -33,7 +37,7 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
 
         public string GetModelFile(string current, out bool changed)
         {
-            changed = !current.Equals(EmptyEffectModel, StringComparison.OrdinalIgnoreCase);
+            changed = !current.Equals(EmptyEffectModel, StringComparison.OrdinalIgnoreCase) && EmptyEffectModel.Length > 0;
             return changed ? EmptyEffectModel : current;
         }
 
@@ -42,7 +46,7 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
             bool onBlacklist = Blacklist.Contains(arto.FormKey); // query blacklist
             if (!EnableWhitelist) // whitelist is disabled
                 return onBlacklist; // return true if on blacklist
-            bool onWhitelist = Whitelist.Contains(arto.FormKey); // whitelist is enabled, query it
+            bool onWhitelist = Whitelist.Contains(arto.FormKey) || HasMatch(arto); // whitelist is enabled, query it
             return !onWhitelist || onBlacklist; // return true if not on whitelist or on blacklist
         }
     }

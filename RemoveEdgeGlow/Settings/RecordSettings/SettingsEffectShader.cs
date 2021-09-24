@@ -2,11 +2,12 @@ using Mutagen.Bethesda.Plugins;
 using System.Collections.Generic;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.WPF.Reflection.Attributes;
-using RemoveEdgeGlow.SettingsObjects;
+using RemoveEdgeGlow.Settings.RecordSettings.EFSH;
+using RemoveEdgeGlow.Settings.GenericUtils;
 
 namespace RemoveEdgeGlow.Settings.RecordSettings
 {
-    public class SettingsEffectShader
+    public class SettingsEffectShader : MatchEditorID
     {
         [MaintainOrder]
         [Tooltip("If Enable Whitelist is unchecked, ALL effect shaders except those on the blacklist will be patched.")]
@@ -45,7 +46,7 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
             bool onBlacklist = Blacklist.Contains(efsh.FormKey); // query blacklist
             if (!EnableWhitelist) // whitelist is disabled
                 return onBlacklist; // return true if on blacklist
-            bool onWhitelist = Whitelist.Contains(efsh.FormKey); // whitelist is enabled, query it
+            bool onWhitelist = Whitelist.Contains(efsh.FormKey) || HasMatch(efsh); // whitelist is enabled, query it
             return !onWhitelist || onBlacklist; // return true if on not whitelist or on blacklist
         }
 
