@@ -37,7 +37,7 @@ namespace RemoveEdgeGlow
 
                 var artoCopy = arto.DeepCopy();
 
-                if (Settings.ApplySettings(ref artoCopy))
+                if (Settings.ApplySettingsTo(ref artoCopy))
                 {
                     ++changes;
                     state.PatchMod.ArtObjects.Set(artoCopy);
@@ -52,7 +52,7 @@ namespace RemoveEdgeGlow
 
                 var efshCopy = efsh.DeepCopy();
 
-                if (Settings.ApplySettings(ref efshCopy, out var subrecordChangeCount) && subrecordChangeCount > 0)
+                if (Settings.ApplySettingsTo(ref efshCopy, out var subrecordChangeCount) && subrecordChangeCount > 0)
                 {
                     ++changes;
                     state.PatchMod.EffectShaders.Set(efshCopy);
