@@ -1,8 +1,9 @@
 using System;
-using Mutagen.Bethesda;
-using Mutagen.Bethesda.Synthesis;
-using Mutagen.Bethesda.Skyrim;
 using System.Threading.Tasks;
+using Mutagen.Bethesda;
+using Mutagen.Bethesda.Plugins.Records;
+using Mutagen.Bethesda.Skyrim;
+using Mutagen.Bethesda.Synthesis;
 using RemoveEdgeGlow.Settings;
 
 namespace RemoveEdgeGlow
@@ -26,31 +27,22 @@ namespace RemoveEdgeGlow
         // PatchMain
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            Console.WriteLine();
-            // Check string matchlist in EffectShader
-            if (Settings.EffectShader.GetInvalidEntryCount(out var inv_count))
-            {
-                Console.WriteLine($"[WARN]\tCommonNames list in section {Constants.EffectShaderSectionName} contains {inv_count} entries that are too short and have been removed.");
-            }
-            // Check string matchlist in ArtObject
-            if (Settings.ArtObject.GetInvalidEntryCount(out inv_count))
-            {
-                Console.WriteLine($"[WARN]\tCommonNames list in section {Constants.ArtObjectSectionName} contains {inv_count} entries that are too short and have been removed.");
-            }
+            if ( Settings.PrintSettings )
+                LogHelper.PrintSettings(Settings);
 
             Console.WriteLine("\nInitialization Complete.\nBeginning Process...\n");
 
             int changes = 0; // count modified records
 
             // iterate through all art objects
-            foreach (var arto in state.LoadOrder.PriorityOrder.ArtObject().WinningOverrides())
+            foreach ( IArtObjectGetter? arto in state.LoadOrder.PriorityOrder.ArtObject().WinningOverrides() )
             {
-                if (Settings.IsBlacklisted(arto) || arto.EditorID == null)
+                if ( !Settings.IsValidPatcherTarget(arto) || arto.EditorID == null )
                     continue;
 
-                var artoCopy = arto.DeepCopy();
+                ArtObject? artoCopy = arto.DeepCopy();
 
-                if (Settings.ApplySettingsTo(ref artoCopy))
+                if ( Settings.ApplySettingsTo(ref artoCopy) )
                 {
                     //++changes;
                     state.PatchMod.ArtObjects.Set(artoCopy);
@@ -58,23 +50,23 @@ namespace RemoveEdgeGlow
                 }
             }
             // iterate through all effect shaders
-            foreach (var efsh in state.LoadOrder.PriorityOrder.EffectShader().WinningOverrides())
+            foreach ( IEffectShaderGetter? efsh in state.LoadOrder.PriorityOrder.EffectShader().WinningOverrides() )
             {
-                if ( Settings.IsBlacklisted(efsh) || efsh.EditorID == null )
+                if ( !Settings.IsValidPatcherTarget(efsh) || efsh.EditorID == null )
                     continue;
 
-                var efshCopy = efsh.DeepCopy();
+                EffectShader? efshCopy = efsh.DeepCopy();
 
-                if (Settings.ApplySettingsTo(ref efshCopy, out var subrecordChangeCount) && subrecordChangeCount > 0)
+                if ( Settings.ApplySettingsTo(ref efshCopy, out int subrecordChangeCount) && subrecordChangeCount > 0 )
                 {
                     state.PatchMod.EffectShaders.Set(efshCopy);
-                    Console.WriteLine($"[{++changes}]\tModified {subrecordChangeCount} value{(subrecordChangeCount > 1 ? "s" : "")} in {efsh.EditorID}");
+                    Console.WriteLine($"[{++changes}]\tModified {subrecordChangeCount} value{( subrecordChangeCount > 1 ? "s" : "" )} in {efsh.EditorID}");
                 }
             }
 
-            if (changes == 0)
+            if ( changes == 0 )
                 Console.WriteLine("Failed to modify any records! Check your settings!");
-            Console.WriteLine($"\nProcess Complete.\nPatched {changes} record{(changes > 1 ? "s" : "")}.\n");
+            Console.WriteLine($"\nProcess Complete.\nPatched {changes} record{( changes > 1 ? "s" : "" )}.\n");
         }
     }
 }
