@@ -1,9 +1,9 @@
-using Mutagen.Bethesda.Plugins;
 using System.Collections.Generic;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.WPF.Reflection.Attributes;
-using RemoveEdgeGlow.Settings.RecordSettings.EFSH;
 using RemoveEdgeGlow.Settings.GenericUtils;
+using RemoveEdgeGlow.Settings.RecordSettings.EFSH;
 
 namespace RemoveEdgeGlow.Settings.RecordSettings
 {
@@ -12,6 +12,23 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
     /// </summary>
     public class SettingsEffectShader : MatchEditorID
     {
+        public SettingsEffectShader() : base(
+            whitelist: null,
+            blacklist: new() {
+                "azura",
+                "detect",
+                "greybeard",
+                "standingstone",
+                "puzzle",
+                "alduin",
+                "miraak",
+                "summon",
+                "shadowmere",
+                "riekling",
+                "lurker",
+                "apocrypha"
+            })
+        { }
         [MaintainOrder]
         [Tooltip("If Enable Whitelist is unchecked, ALL effect shaders except those on the blacklist will be patched.")]
         public bool EnableWhitelist = false;
@@ -51,18 +68,20 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         public float FillTextureScaleV = 1.0f;
 
         /// <summary>
-        /// Check if the given EffectShader is present on the blacklist, and/or whitelisted.
-        /// Returns true if the effect is not a valid patcher target.
+        /// Check if a given Effect Shader is present on the whitelist, or if the whitelist is disabled, if it is not on the blacklist
+        /// Returns true when the given effect shader's formkey IS a valid target for the patcher.
         /// </summary>
-        /// <param name="efsh">An IEffectShaderGetter instance.</param>
+        /// <param name="efsh">Effect Shader Getter Interface</param>
         /// <returns>bool</returns>
-        public bool IsBlacklisted(IEffectShaderGetter efsh)
+        public bool IsValidPatchTarget(IEffectShaderGetter efsh)
         {
-            bool onBlacklist = Blacklist.Contains(efsh.FormKey); // query blacklist
-            if (!EnableWhitelist) // whitelist is disabled
-                return onBlacklist; // return true if on blacklist
-            bool onWhitelist = Whitelist.Contains(efsh.FormKey) || HasMatch(efsh); // whitelist is enabled, query it
-            return !onWhitelist || onBlacklist; // return true if on not whitelist or on blacklist
+            if ( efsh.EditorID == null )
+                return false;
+            bool onBlacklist = Blacklist.Contains(efsh.FormKey) || IsBlacklistedEditorID(efsh.EditorID); // query blacklist
+            if ( !EnableWhitelist )
+                return !onBlacklist; // return true if not blacklisted
+            bool onWhitelist = Whitelist.Contains(efsh.FormKey) || IsWhitelistedEditorID(efsh.EditorID); // whitelist is enabled, query it
+            return !onBlacklist && onWhitelist; // return true if not on blacklist or is on whitelist
         }
 
         /// <summary>
@@ -75,7 +94,7 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         /// <returns>T</returns>
         private static T ApplySettingsToValue<T>(T value, T setting, ref int changed)
         {
-            var changedThis = !value!.Equals(setting!);
+            bool changedThis = !value!.Equals(setting!);
             changed += changedThis ? 1 : 0;
             return changedThis ? setting : value;
         }
@@ -88,22 +107,22 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         /// <returns>int</returns>
         public int ApplySettingsTo(ref EffectShader efsh)
         {
-            var changed = 0;
+            int changed = 0;
             // Edge Effect Alpha Ratios
             efsh.EdgeEffectPersistentAlphaRatio = ApplySettingsToValue(efsh.EdgeEffectPersistentAlphaRatio, EdgeEffectPersistentAlphaRatio, ref changed);
             efsh.EdgeEffectFullAlphaRatio = ApplySettingsToValue(efsh.EdgeEffectFullAlphaRatio, EdgeEffectFullAlphaRatio, ref changed);
 
             // Color Key 1
             efsh.ColorKey1 = ApplySettingsToValue(efsh.ColorKey1, ColorKey1, ref changed);
-            efsh.ColorKey1Time = ColorKey1.GetTime(efsh.ColorKey1Time, out var changedKey1Time);
+            efsh.ColorKey1Time = ColorKey1.GetTime(efsh.ColorKey1Time, out bool changedKey1Time);
 
             // Color Key 2
             efsh.ColorKey2 = ApplySettingsToValue(efsh.ColorKey2, ColorKey2, ref changed);
-            efsh.ColorKey2Time = ColorKey2.GetTime(efsh.ColorKey2Time, out var changedKey2Time);
+            efsh.ColorKey2Time = ColorKey2.GetTime(efsh.ColorKey2Time, out bool changedKey2Time);
 
             // Color Key 3
             efsh.ColorKey3 = ApplySettingsToValue(efsh.ColorKey3, ColorKey3, ref changed);
-            efsh.ColorKey3Time = ColorKey3.GetTime(efsh.ColorKey3Time, out var changedKey3Time);
+            efsh.ColorKey3Time = ColorKey3.GetTime(efsh.ColorKey3Time, out bool changedKey3Time);
 
             // Particle Shader Animated
             efsh.ParticleAnimatedStartFrame = ApplySettingsToValue(efsh.ParticleAnimatedStartFrame, ParticleSettings.StartFrame, ref changed);

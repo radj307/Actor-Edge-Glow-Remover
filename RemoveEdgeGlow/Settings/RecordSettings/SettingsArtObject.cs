@@ -14,10 +14,12 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
     [ObjectNameMember(nameof(EmptyEffectModel))]
     public class SettingsArtObject : MatchEditorID
     {
-        public SettingsArtObject() : base(new()
-        {
-            "cloak"
-        }) { }
+        public SettingsArtObject() : base(
+            whitelist: new()
+            {
+                "cloak"
+            })
+        {}
         [MaintainOrder]
         [SettingName("Model Filepath")]
         [Tooltip("Absolute or relative filepath to a .nif containing a blank Art Object.")]
@@ -53,18 +55,20 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
         }
 
         /// <summary>
-        /// Check if the given Art Object is present on the blacklist, and/or whitelisted.
-        /// Returns true if the art object is not a valid patcher target.
+        /// Check if a given Art Object is present on the whitelist, or if the whitelist is disabled, if it is not on the blacklist
+        /// Returns true when the given art object's formkey IS a valid target for the patcher.
         /// </summary>
-        /// <param name="arto">An IArtObjectGetter instance.</param>
+        /// <param name="arto">Art Object Getter Interface</param>
         /// <returns>bool</returns>
-        public bool IsBlacklisted(IArtObjectGetter arto)
+        public bool IsValidPatchTarget(IArtObjectGetter arto)
         {
-            bool onBlacklist = Blacklist.Contains(arto.FormKey); // query blacklist
-            if (!EnableWhitelist) // whitelist is disabled
-                return onBlacklist; // return true if on blacklist
-            bool onWhitelist = Whitelist.Contains(arto.FormKey) || HasMatch(arto); // whitelist is enabled, query it
-            return !onWhitelist || onBlacklist; // return true if not on whitelist or on blacklist
+            if ( arto.EditorID == null )
+                return false;
+            bool onBlacklist = Blacklist.Contains(arto.FormKey) || IsBlacklistedEditorID(arto.EditorID); // query blacklist
+            if ( !EnableWhitelist )
+                return !onBlacklist; // return true if not blacklisted
+            bool onWhitelist = Whitelist.Contains(arto.FormKey) || IsWhitelistedEditorID(arto.EditorID); // whitelist is enabled, query it
+            return !onBlacklist && onWhitelist; // return true if not on blacklist or is on whitelist
         }
     }
 }
