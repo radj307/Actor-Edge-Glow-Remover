@@ -1,4 +1,3 @@
-using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.WPF.Reflection.Attributes;
 using RemoveEdgeGlow.Settings.PluginSettings;
