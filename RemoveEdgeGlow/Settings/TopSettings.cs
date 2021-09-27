@@ -8,13 +8,13 @@ namespace RemoveEdgeGlow.Settings
     public class TopSettings
     {
         // Plugin-Specific Section
-        [SettingName(nameof(Constants.PluginSectionName))]
+        [SettingName(Constants.PluginSectionName)]
         public SettingsModKey Plugin = new();
         // Effect Shader Section
-        [SettingName(nameof(Constants.EffectShaderSectionName))]
+        [SettingName(Constants.EffectShaderSectionName)]
         public SettingsEffectShader EffectShader = new();
         // Art Object Section
-        [SettingName(nameof(Constants.ArtObjectSectionName))]
+        [SettingName(Constants.ArtObjectSectionName)]
         public SettingsArtObject ArtObject = new();
 
         public bool PrintSettings;
