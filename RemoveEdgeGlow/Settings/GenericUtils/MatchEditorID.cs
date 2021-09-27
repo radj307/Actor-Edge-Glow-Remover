@@ -13,7 +13,6 @@ namespace RemoveEdgeGlow.Settings.GenericUtils
             StringBlacklist = blacklist ?? new();
         }
 
-        [MaintainOrder]
         [SettingName("Common Names (Whitelist)")]
         [Tooltip("Any records whose Editor ID contains one of these words will be added to the Whitelist")]
         public List<string> StringWhitelist;

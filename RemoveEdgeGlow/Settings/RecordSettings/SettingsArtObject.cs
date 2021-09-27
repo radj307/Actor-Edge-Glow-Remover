@@ -11,7 +11,6 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
     /// <summary>
     /// Contains all Art-Object-Specific Settings.
     /// </summary>
-    [ObjectNameMember(nameof(EmptyEffectModel))]
     public class SettingsArtObject : MatchEditorID
     {
         public SettingsArtObject() : base(
@@ -19,7 +18,7 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
             {
                 "cloak"
             })
-        {}
+        { }
         [MaintainOrder]
         [SettingName("Model Filepath")]
         [Tooltip("Absolute or relative filepath to a .nif containing a blank Art Object.")]

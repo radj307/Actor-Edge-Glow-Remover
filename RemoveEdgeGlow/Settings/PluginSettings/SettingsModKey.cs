@@ -20,7 +20,7 @@ namespace RemoveEdgeGlow.Settings.PluginSettings
         { // Default Plugin Whitelist
         };
 
-        [SettingName("Plugin Blacklist")]
+        [SettingName("Never Override Plugins")]
         [Tooltip("Never consider records to be a match if they were last modified by one of these plugins, EVEN IF IT APPEARS ON THE WHITELIST!")]
         public List<ModKey> Blacklist = new()
         { // Default Plugin Blacklist
