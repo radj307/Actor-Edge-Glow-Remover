@@ -26,7 +26,21 @@ namespace RemoveEdgeGlow.Settings.RecordSettings
                 "shadowmere",
                 "riekling",
                 "lurker",
-                "apocrypha"
+                "apocrypha",
+                "icewraith",
+                "ghost",
+                "ethereal",
+                "illusion",
+                "muffle",
+                "absorb",
+                "kyne",
+                "animalally",
+                "disintegrate",
+                "dragon",
+                "lightbeam",
+                "whirlwind",
+                "dlc2expspider",
+                "vampire",
             })
         { }
         [MaintainOrder]

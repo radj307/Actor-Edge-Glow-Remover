@@ -35,32 +35,32 @@ namespace RemoveEdgeGlow
             int changes = 0; // count modified records
 
             // iterate through all art objects
-            foreach ( IArtObjectGetter? arto in state.LoadOrder.PriorityOrder.ArtObject().WinningOverrides() )
+            foreach ( var arto in state.LoadOrder.PriorityOrder.ArtObject().WinningContextOverrides() )
             {
-                if ( !Settings.IsValidPatcherTarget(arto) || arto.EditorID == null )
+                if ( !Settings.IsValidPatcherTarget(arto.Record) || arto.Record.EditorID == null || ( Settings.Plugin.IsWhitelistedPlugin(arto.ModKey) && !Settings.Plugin.IsBlacklistedPlugin(arto.ModKey) ) )
                     continue;
 
-                ArtObject? artoCopy = arto.DeepCopy();
+                ArtObject? artoCopy = arto.Record.DeepCopy();
 
                 if ( Settings.ApplySettingsTo(ref artoCopy) )
                 {
                     //++changes;
                     state.PatchMod.ArtObjects.Set(artoCopy);
-                    Console.WriteLine($"[{++changes}]\tSet {arto.EditorID} model filepath to {Settings.ArtObject.EmptyEffectModel}");
+                    Console.WriteLine($"[{++changes}]\tSet {arto.Record.EditorID}{(Settings.PrintFormKeys ? $" ({arto.Record.FormKey})" : "")} model filepath to {Settings.ArtObject.EmptyEffectModel}");
                 }
             }
             // iterate through all effect shaders
-            foreach ( IEffectShaderGetter? efsh in state.LoadOrder.PriorityOrder.EffectShader().WinningOverrides() )
+            foreach ( var efsh in state.LoadOrder.PriorityOrder.EffectShader().WinningContextOverrides() )
             {
-                if ( !Settings.IsValidPatcherTarget(efsh) || efsh.EditorID == null )
+                if ( !Settings.IsValidPatcherTarget(efsh.Record) || efsh.Record.EditorID == null || ( Settings.Plugin.IsWhitelistedPlugin(efsh.ModKey) && !Settings.Plugin.IsBlacklistedPlugin(efsh.ModKey) ) )
                     continue;
 
-                EffectShader? efshCopy = efsh.DeepCopy();
+                EffectShader? efshCopy = efsh.Record.DeepCopy();
 
                 if ( Settings.ApplySettingsTo(ref efshCopy, out int subrecordChangeCount) && subrecordChangeCount > 0 )
                 {
                     state.PatchMod.EffectShaders.Set(efshCopy);
-                    Console.WriteLine($"[{++changes}]\tModified {subrecordChangeCount} value{( subrecordChangeCount > 1 ? "s" : "" )} in {efsh.EditorID}");
+                    Console.WriteLine($"[{++changes}]\tModified {subrecordChangeCount} value{( subrecordChangeCount > 1 ? "s" : "" )} in {efsh.Record.EditorID}{( Settings.PrintFormKeys ? $" ({efsh.Record.FormKey})" : "" )}");
                 }
             }
 

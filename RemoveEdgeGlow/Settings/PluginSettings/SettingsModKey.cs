@@ -18,6 +18,7 @@ namespace RemoveEdgeGlow.Settings.PluginSettings
         [Tooltip("Always consider records to be a match if they were last modified by one of these plugins.")]
         public List<ModKey> Whitelist = new()
         { // Default Plugin Whitelist
+            ModKey.FromNameAndExtension("Apocalypse - Magic of Skyrim.esp")
         };
 
         [SettingName("Never Override Plugins")]

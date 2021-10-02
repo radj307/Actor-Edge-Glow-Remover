@@ -18,6 +18,8 @@ namespace RemoveEdgeGlow.Settings
         public SettingsArtObject ArtObject = new();
 
         public bool PrintSettings;
+        [Tooltip("Prints out formkeys in the log for each record added to the patch.")]
+        public bool PrintFormKeys = true;
 
         /// <summary>
         /// Check if the given Art Object record is a valid patcher target with the current settings.
