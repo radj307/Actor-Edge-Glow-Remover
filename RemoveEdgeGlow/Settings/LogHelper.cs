@@ -18,7 +18,7 @@ namespace RemoveEdgeGlow.Settings
                 Console.WriteLine("  }");
             }
         }
-        internal static void PrintSettingList<T>(string name, List<FormLink<T>> list) where T : class, IMajorRecordCommonGetter
+        internal static void PrintSettingList<T>(string name, List<FormLink<T>> list) where T : class, IMajorRecordGetter
         {
             if (list.Count > 0 )
             {
